@@ -6,9 +6,13 @@ A real-time collaboration demo.
 Install
 -------
 
+### Node
+
+https://github.com/joyent/node/wiki/Installing-Node.js-via-package-manager
+
+### Socket.IO
+
 ```
-$ brew install node
-$ cd <demo dir>
 $ npm install socket.io
 ```
 
@@ -17,7 +21,10 @@ Usage
 
 In the terminal:
 
-`$ node app.js`
+```
+$ cd <demo dir>
+$ node app.js
+```
 
 From the browser, visit:
 
