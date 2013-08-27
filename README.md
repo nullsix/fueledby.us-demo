@@ -28,9 +28,9 @@ You should see the demo in the browser.
 Dependencies
 ------------
 
-node v0.10.17
-jQuery 2.0.3
-Socket.IO v.9
+- node v0.10.17
+- jQuery 2.0.3
+- Socket.IO v.9
 
 License
 -------
