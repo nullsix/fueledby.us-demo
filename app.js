@@ -33,6 +33,7 @@ function handler (req, res) {
 }
 
 var content = "<p contenteditable>You can start typing here!</p>";
+var names = "";
 
 io.sockets.on('connection', function (socket) {
   socket.emit('download', content);
@@ -40,5 +41,17 @@ io.sockets.on('connection', function (socket) {
   socket.on('upload', function(data) {
     content = data
     socket.broadcast.emit('download', content);
+  });
+
+  socket.on('set name', function(name) {
+    socket.set('name', name);
+    if (names == "") {
+      names = name;
+    } else {
+      names += ", " + name;
+    }
+
+    socket.broadcast.emit('show names', names);
+    socket.emit('show names', names);
   });
 });

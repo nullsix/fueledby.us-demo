@@ -5,18 +5,12 @@
     <script src="/socket.io/socket.io.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <script src="client.js"></script>
-    <script>
-      var socket = io.connect('http://fueledby.us');
-      socket.on('download', function (data) {
-          console.log("Received broadcast: " + data);
-          $('#content').html(data);
-      });
-    </script>
     <link rel="stylesheet" type="text/css" href="app.css" />
   </head>
   <body>
   <h1>FueledBy.Us</h1>
   <h2>real-time collaboration demo</h2>
+  <div id="name"><input type="text" id="username" placeholder="Your name..."></input></div>
   <div id="content" contenteditable></div>
   </body>
 </html>
