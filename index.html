@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>FueledBy.Us Demo</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="client.js"></script>
+    <script>
+      var socket = io.connect('http://localhost');
+      socket.on('download', function (data) {
+          console.log("Received broadcast: " + data);
+          $('#content').html(data);
+      });
+    </script>
+    <link rel="stylesheet" type="text/css" href="app.css" />
+  </head>
+  <body>
+  <h1>Start your engines:</h1>
+  <div id="content" contenteditable><p contenteditable>You can start typing here!</p></div>
+  </body>
+</html>
