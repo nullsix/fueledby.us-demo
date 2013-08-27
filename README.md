@@ -1,10 +1,10 @@
 FueledBy.Us Demo
-----------------
+================
 
 A real-time collaboration demo.
 
 Install
-=======
+-------
 
 ```
 brew install node
@@ -13,7 +13,7 @@ npm install socket.io
 ```
 
 Usage
-=====
+-----
 
 In the terminal:
 
@@ -26,13 +26,13 @@ From the browser, visit:
 You should see the demo in the browser.
 
 Dependencies
-============
+------------
 
 node v0.10.17
 jQuery 2.0.3
 Socket.IO v.9
 
 License
-=======
+-------
 
 MIT
