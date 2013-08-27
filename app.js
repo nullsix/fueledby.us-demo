@@ -32,8 +32,13 @@ function handler (req, res) {
   }
 }
 
+var content = "<p contenteditable>You can start typing here!</p>";
+
 io.sockets.on('connection', function (socket) {
+  socket.emit('download', content);
+
   socket.on('upload', function(data) {
-    socket.broadcast.emit('download', data);
+    content = data
+    socket.broadcast.emit('download', content);
   });
 });
