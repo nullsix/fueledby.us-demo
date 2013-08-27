@@ -7,9 +7,9 @@ Install
 -------
 
 ```
-brew install node
-cd <demo dir>
-npm install socket.io
+$ brew install node
+$ cd <demo dir>
+$ npm install socket.io
 ```
 
 Usage
@@ -17,13 +17,14 @@ Usage
 
 In the terminal:
 
-`node app.js`
+`$ node app.js`
 
 From the browser, visit:
 
 `localhost:8000`
 
-You should see the demo in the browser.
+Now, try out the demo. Open another browser window to that address to
+see the collaborative portion.
 
 Dependencies
 ------------
