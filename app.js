@@ -33,25 +33,51 @@ function handler (req, res) {
 }
 
 var content = "<p contenteditable>You can start typing here!</p>";
-var names = "";
+var people = [];
 
 io.sockets.on('connection', function (socket) {
   socket.emit('download', content);
 
   socket.on('upload', function(data) {
-    content = data
+    content = data;
     socket.broadcast.emit('download', content);
   });
 
   socket.on('set name', function(name) {
-    socket.set('name', name);
-    if (names == "") {
-      names = name;
-    } else {
-      names += ", " + name;
-    }
+    var person = {socketId: socket.id, name: name}
+    people.push(person);
+    emit_names();
+  });
 
-    socket.broadcast.emit('show names', names);
-    socket.emit('show names', names);
+  socket.on("disconnect", function() {
+    for (var count = 0; count < people.length; count++) {
+      var person = people[count];
+      if(person.socketId == socket.id) {
+        people.splice(count, 1);
+      }
+    };
+    emit_names();
   });
 });
+
+function emit_names() {
+  io.sockets.emit('show names', get_names());
+}
+
+function get_names() {
+  var name_string = "";
+
+  for (var count = 0; count < people.length; count++) {
+    var person = people[count];
+    var name = person.name;
+
+    if (name_string == "") {
+      name_string = name;
+
+    } else {
+      name_string += ", " + name;
+    }
+  }
+
+  return name_string;
+}
