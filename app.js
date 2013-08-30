@@ -44,19 +44,24 @@ io.sockets.on('connection', function (socket) {
   });
 
   socket.on('set name', function(name) {
-    var person = {socketId: socket.id, name: name}
-    people.push(person);
-    emit_names();
+    // sets the name to the name property on the socket
+    // can be retrieved with Socket#get
+    // this eliminates the need to track socket ids
+    socket.set('name', name, function () {
+      people.push(name);
+      socket.emit('show names', get_names());
+    });
   });
 
   socket.on("disconnect", function() {
-    for (var count = 0; count < people.length; count++) {
-      var person = people[count];
-      if(person.socketId == socket.id) {
-        people.splice(count, 1);
-      }
-    };
-    emit_names();
+    socket.get('name', function (err, name) {
+      // Array#indexOf returns the index of an element if found
+      // will return -1 if not found
+      // if (idx >= 0) indicates element found
+      var idx = people.indexOf(name);
+      people.splice(idx, 1);
+      emit_names();
+    });
   });
 });
 
@@ -65,19 +70,7 @@ function emit_names() {
 }
 
 function get_names() {
-  var name_string = "";
-
-  for (var count = 0; count < people.length; count++) {
-    var person = people[count];
-    var name = person.name;
-
-    if (name_string == "") {
-      name_string = name;
-
-    } else {
-      name_string += ", " + name;
-    }
-  }
-
-  return name_string;
+  // we are no longer tracking a JS object in the array
+  // so we can just join the names using Array#join
+  return people.join(",");
 }
