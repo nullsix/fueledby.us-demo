@@ -44,9 +44,6 @@ io.sockets.on('connection', function (socket) {
   });
 
   socket.on('set name', function(name) {
-    // sets the name to the name property on the socket
-    // can be retrieved with Socket#get
-    // this eliminates the need to track socket ids
     socket.set('name', name, function () {
       people.push(name);
       socket.emit('show names', get_names());
@@ -55,11 +52,10 @@ io.sockets.on('connection', function (socket) {
 
   socket.on("disconnect", function() {
     socket.get('name', function (err, name) {
-      // Array#indexOf returns the index of an element if found
-      // will return -1 if not found
-      // if (idx >= 0) indicates element found
       var idx = people.indexOf(name);
-      people.splice(idx, 1);
+      if (idx >= 0) {
+        people.splice(idx, 1);
+      }
       emit_names();
     });
   });
@@ -70,7 +66,5 @@ function emit_names() {
 }
 
 function get_names() {
-  // we are no longer tracking a JS object in the array
-  // so we can just join the names using Array#join
-  return people.join(",");
+  return people.join(", ");
 }
