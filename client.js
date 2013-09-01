@@ -9,7 +9,7 @@ socket.on('connect', function() {
   if($.cookie('currentUser')) {
     socket.emit('logIn', $.cookie('currentUser'));
   } else {
-    $('#username').show();
+    $('#username').show().focus();
   }
 });
 
@@ -17,18 +17,52 @@ socket.on('download', function (data) {
   if (!isUserTyping) {
     $('#content').html(data);
     contentSaved();
+    if(userHasLoggedIn()) {
+      setCaretAtEndOfContent();
+    }
   }
 });
 
-socket.on('currentUser', function(currentUser) {
-  setCurrentUser(currentUser);
-});
+function userHasLoggedIn() {
+  return !(typeof currentUser === 'undefined')
+}
 
-function setCurrentUser(user) {
+function setCaretAtEndOfContent() {
+  var c = $('#content')[0];
+  placeCaretAtEnd(c);
+}
+
+// Function courtesy of StackOverflow.
+// StackOverflow Question:
+//   http://stackoverflow.com/questions/1125292/how-to-move-cursor-to-end-of-contenteditable-entity/3866442
+//   by avsej: http://stackoverflow.com/users/98509/avsej
+// Answer:
+//   http://stackoverflow.com/a/3866442/249218
+//   by Nico Burns: http://stackoverflow.com/users/140293/nico-burns
+function placeCaretAtEnd(el) {
+  el.focus();
+  if (typeof window.getSelection != "undefined" &&
+      typeof document.createRange != "undefined") {
+    var range = document.createRange();
+    range.selectNodeContents(el);
+    range.collapse(false);
+    var sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+  } else if (typeof document.body.createTextRange != "undefined") {
+    var textRange = document.body.createTextRange();
+    textRange.moveToElementText(el);
+    textRange.collapse(false);
+    textRange.select();
+  }
+}
+
+socket.on('currentUser', function(user) {
   currentUser = user;
   $.cookie('currentUser', currentUser.name);
   $('#currentUser').html('<p>Hi, ' + currentUser.name + '!</p>');
-}
+  setCaretAtEndOfContent();
+});
 
 socket.on('activeUsers', function(users) {
   activeUsers = users;
