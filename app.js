@@ -2,7 +2,7 @@ var app = require('http').createServer(handler)
   , io = require('socket.io').listen(app)
   , fs = require('fs');
 
-var documentFile = __dirname + '/document.html';
+var contentFile = __dirname + '/content.html';
 var content = getContent();
 var people = [];
 
@@ -60,13 +60,13 @@ io.sockets.on('connection', function (socket) {
 });
 
 function getContent() {
-  if (fs.existsSync(documentFile)) {
-    return fs.readFileSync(documentFile).toString();
+  if (fs.existsSync(contentFile)) {
+    return fs.readFileSync(contentFile).toString();
   }
 }
 
 function saveContent(content) {
-  fs.writeFile(documentFile, content, function (err) {
+  fs.writeFile(contentFile, content, function (err) {
     if (err) { throw err; }
   });
 }
