@@ -7,7 +7,7 @@ app.listen(80);
 function handler (req, res) {
   path = req.url;
   if (path == '/') { // Read the index.html
-    serveAsset(res, "/index.html");
+    serveAsset(res, '/index.html');
 
   } else { // Read the asset requested
     serveAsset(res, path);
@@ -28,7 +28,7 @@ function serveAsset(res, path) {
   );
 }
 
-var content = "<p contenteditable>You can start typing here!</p>";
+var content = '<p contenteditable>You can start typing here!</p>';
 var people = [];
 
 io.sockets.on('connection', function (socket) {
@@ -46,7 +46,7 @@ io.sockets.on('connection', function (socket) {
     });
   });
 
-  socket.on("disconnect", function() {
+  socket.on('disconnect', function() {
     socket.get('name', function (err, name) {
       var idx = people.indexOf(name);
       if (idx >= 0) {
@@ -62,5 +62,5 @@ function emit_names() {
 }
 
 function get_names() {
-  return people.join(", ");
+  return people.join(', ');
 }
