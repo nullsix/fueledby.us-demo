@@ -1,9 +1,14 @@
 var socket = io.connect('http://fueledby.us');
-var contentUploadTimerId;
 var currentUser;
+var contentUploadTimer;
+var userIsTyping = false;
+var TYPING_DELAY = 1000;
 
 socket.on('download', function (data) {
-  $('#content').html(data);
+  if (!userIsTyping) {
+    $('#content').html(data);
+    contentSaved();
+  }
 });
 
 socket.on('currentUser', function(name) {
@@ -16,16 +21,20 @@ socket.on('activeUsers', function(names) {
 
 $(document).ready(function() {
   $('#content').wysiwyg();
-  $('#content').keyup(resetContentUploadTimer);
+  $('#content').keyup(userTyping);
   $('#username').keyup(createUser);
 });
 
-function resetContentUploadTimer() {
-  clearTimeout(contentUploadTimerId);
-  contentUploadTimerId = setTimeout(uploadContent, 1000);
+function userTyping() {
+  clearTimeout(contentUploadTimer);
+  userIsTyping = true;
+  setStatus('Typing...');
+  contentUploadTimer = setTimeout(uploadContent, TYPING_DELAY);
 }
 
 function uploadContent() {
+  userIsTyping = false;
+  contentSaved();
   socket.emit('upload', $('#content').html());
 };
 
@@ -34,6 +43,14 @@ function createUser() {
     socket.emit('createUser', $('#username').val());
   }
 };
+
+function contentSaved() {
+  setStatus('Saved');
+}
+
+function setStatus(text) {
+  $('#status').html('<p>' + text + '</p>');
+}
 
 function currentUserIsSet() {
   return !(typeof currentUser === 'undefined')
