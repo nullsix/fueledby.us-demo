@@ -4,7 +4,9 @@ var app = require('http').createServer(handler)
 
 var contentFile = __dirname + '/content.html';
 var content = getContent();
-var people = [];
+var contributorsFile = __dirname + '/contributors.json'
+var contributors = getContributors();
+var activeUsers = {};
 
 app.listen(80);
 
@@ -34,7 +36,7 @@ function serveAsset(res, path) {
 
 io.sockets.on('connection', function (socket) {
   socket.emit('download', content);
-  emitNames();
+  sendActiveUsers();
 
   socket.on('upload', function(data) {
     content = data;
@@ -42,21 +44,32 @@ io.sockets.on('connection', function (socket) {
     socket.broadcast.emit('download', content);
   });
 
-  socket.on('createUser', function(name) {
-    socket.set('name', name, function () {
-      people.push(name);
-      socket.emit('currentUser', name);
-      emitNames();
+  socket.on('logIn', function(name) {
+    if (name in contributors) {
+      user = contributors[name];
+    } else {
+      user = { name: name }
+      newContributor(user);
+    }
+
+    socket.set('currentUser', user, function() {
+      activeUsers[name] = user;
+      socket.emit('currentUser', user);
+      sendActiveUsers();
     });
   });
 
+  function newContributor(user) {
+    contributors[user.name] = user;
+    saveContributors(contributors);
+  }
+
   socket.on('disconnect', function() {
-    socket.get('name', function (err, name) {
-      var idx = people.indexOf(name);
-      if (idx >= 0) {
-        people.splice(idx, 1);
+    socket.get('currentUser', function (err, currentUser) {
+      if (currentUser && currentUser.name in activeUsers) {
+        delete activeUsers[currentUser.name];
       }
-      emitNames();
+      sendActiveUsers();
     });
   });
 });
@@ -73,14 +86,22 @@ function saveContent(content) {
   fs.writeFileSync(contentFile, content)
 }
 
-function emitNames() {
-  io.sockets.emit('activeUsers', getNames());
+function getContributors() {
+  if(!fs.existsSync(contributorsFile)) {
+    saveContributors({});
+  }
+
+  var contributorsBuffer = fs.readFileSync(contributorsFile);
+  var contributorsString = contributorsBuffer.toString();
+  return JSON.parse(contributorsString);
 }
 
-function getNames() {
-  if (people.length == 0) {
-    return "No logged in users...";
-  } else {
-    return '<b>Users:</b> ' + people.join(', ');
-  }
+function saveContributors(contributors) {
+  var contributorsString = JSON.stringify(contributors);
+  fs.writeFileSync(contributorsFile, contributorsString);
 }
+
+function sendActiveUsers() {
+  io.sockets.emit('activeUsers', activeUsers);
+}
+

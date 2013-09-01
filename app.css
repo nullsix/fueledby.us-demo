@@ -2,6 +2,10 @@ body {
   padding: 0px 5px 0px 5px;
 }
 
+#username {
+  display: none;
+}
+
 #currentUser {
   position: absolute;
   top: 5px;
