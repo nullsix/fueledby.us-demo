@@ -12,8 +12,8 @@ socket.on('show names', function(names) {
   }
 });
 
-
 $(document).ready(function() {
+  $('#content').wysiwyg();
   $('#content').keyup(resetContentUploadTimer);
   $('#username').keyup(processUsername);
 });
@@ -33,3 +33,4 @@ function processUsername () {
     nameHasBeenSet = true;
   }
 };
+
