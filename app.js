@@ -60,15 +60,15 @@ io.sockets.on('connection', function (socket) {
 });
 
 function getContent() {
-  if (fs.existsSync(contentFile)) {
-    return fs.readFileSync(contentFile).toString();
+  if (!fs.existsSync(contentFile)) {
+    saveContent('<p>You can start typing here!</p>');
   }
+
+  return fs.readFileSync(contentFile).toString();
 }
 
 function saveContent(content) {
-  fs.writeFile(contentFile, content, function (err) {
-    if (err) { throw err; }
-  });
+  fs.writeFileSync(contentFile, content)
 }
 
 function emitNames() {
