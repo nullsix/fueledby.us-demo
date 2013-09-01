@@ -44,7 +44,7 @@ io.sockets.on('connection', function (socket) {
   socket.on('set name', function(name) {
     socket.set('name', name, function () {
       people.push(name);
-      socket.emit('show names', getNames());
+      emitNames();
     });
   });
 
