@@ -34,6 +34,7 @@ function serveAsset(res, path) {
 
 io.sockets.on('connection', function (socket) {
   socket.emit('download', content);
+  emitNames();
 
   socket.on('upload', function(data) {
     content = data;
@@ -41,9 +42,10 @@ io.sockets.on('connection', function (socket) {
     socket.broadcast.emit('download', content);
   });
 
-  socket.on('set name', function(name) {
+  socket.on('createUser', function(name) {
     socket.set('name', name, function () {
       people.push(name);
+      socket.emit('currentUser', name);
       emitNames();
     });
   });
@@ -72,9 +74,13 @@ function saveContent(content) {
 }
 
 function emitNames() {
-  io.sockets.emit('show names', getNames());
+  io.sockets.emit('activeUsers', getNames());
 }
 
 function getNames() {
-  return people.join(', ');
+  if (people.length == 0) {
+    return "No logged in users...";
+  } else {
+    return '<b>Users:</b> ' + people.join(', ');
+  }
 }
