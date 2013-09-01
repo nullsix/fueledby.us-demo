@@ -7,29 +7,25 @@ app.listen(80);
 function handler (req, res) {
   path = req.url;
   if (path == '/') { // Read the index.html
-    fs.readFile(__dirname + '/index.html',
-      function (err, data) {
-        if (err) {
-          res.writeHead(500);
-          return res.end('Error loading index.html');
-        }
-
-        res.writeHead(200);
-        res.end(data);
-      });
+    serveAsset(res, "/index.html");
 
   } else { // Read the asset requested
-    fs.readFile(__dirname + path,
-      function (err, data) {
-        if (err) {
-          res.writeHead(500);
-          return res.end('Error loading ' + path);
-        }
-
-        res.writeHead(200);
-        res.end(data);
-      });
+    serveAsset(res, path);
   }
+}
+
+function serveAsset(res, path) {
+  fs.readFile(__dirname + path,
+    function (err, data) {
+      if (err) {
+        res.writeHead(500);
+        return res.end('Error loading ' + path);
+      }
+
+      res.writeHead(200);
+      res.end(data);
+    }
+  );
 }
 
 var content = "<p contenteditable>You can start typing here!</p>";
