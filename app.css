@@ -93,3 +93,11 @@ div:focus {
   color: #00D8E8;
 }
 
+.comments {
+  margin: 0px 0px 5px 15px;
+}
+
+.comments i {
+  vertical-align: top;
+}
+

@@ -20,6 +20,7 @@ socket.on('toClient', function (version) {
     $('#content').html(currentVersion.content);
     contentSaved();
     hookUpCommentEvents();
+    hookUpCommentRemoveEvents();
     if(userHasLoggedIn()) {
       setCaretAtEndOfContent();
     }
@@ -61,9 +62,33 @@ function hookUpCommentEvent(pTag) {
 
   // Insert the actual comment box
   icon.click(function(e) {
-      var elementToInsertAfter = skipOverComments(pTag);
-      elementToInsertAfter.after('<div class="comments" contenteditable="true" style="margin-left:15px;"><textarea placeholder="Comment..." /></div>');
-      elementToInsertAfter.next().find('textarea').focus();
+    var elementToInsertAfter = skipOverComments(pTag);
+    elementToInsertAfter.after(
+      '<div class="comments user' + currentUser.number +
+        '" contenteditable="true">'+
+        '<textarea placeholder="Comment..." />' +
+        '&nbsp;<i class="icon icon-remove"></i><br>' +
+        '<small class="muted">' +
+          'comment from ' + currentUser.name +
+        '</small>' +
+      '</div>');
+    elementToInsertAfter.next().find('textarea').focus();
+    hookUpCommentRemoveEvent(elementToInsertAfter.next().find('i'));
+    userTyping();
+  });
+}
+
+function hookUpCommentRemoveEvents() {
+  $('#content').find('.comments').find('i').each(function() {
+    hookUpCommentRemoveEvent($(this));
+  });
+}
+
+function hookUpCommentRemoveEvent(el) {
+  el.click(function(e) {
+    placeCaretAtEnd($(this).parent().prev()[0]);
+    $(this).parent().remove();
+    userTyping();
   });
 }
 
@@ -145,22 +170,35 @@ $(document).ready(function() {
 
 function processKeyDown(e) {
   if(e.keyCode == 13) { // Enter
-    var text = window.getSelection().focusNode;
-    var ptag = $(text.parentElement);
-    if(ptag[0].nodeName == 'P') {
-      e.preventDefault();
-      var newEl = ptag.clone();
-      var elementToPlaceAfter = skipOverComments(ptag);
-      elementToPlaceAfter.after(newEl);
+    processEnter(e);
+  }
+};
 
-      placeCaretAtEnd(newEl[0]);
-      newEl.html('<br>');
-      addCommentLine(newEl);
-      hookUpCommentEvent(newEl);
-    }
+function processEnter(e) {
+  var focus = $(window.getSelection().focusNode);
+  var el;
+  if(focus[0].nodeName == '#text') {
+    // Focus is with the text in the p tag.
+    el = $(focus[0].parentElement);
+  } else if (focus[0].nodeName == 'P') {
+    // Focus is with the p tag itself.
+    el = focus;
+  } else {
+    // We don't care about this, because it isn't a p tag!
+    return;
   }
 
-};
+  e.preventDefault();
+  var newEl = el.clone();
+  var elementToPlaceAfter = skipOverComments(el);
+  elementToPlaceAfter.after(newEl);
+
+  placeCaretAtEnd(newEl[0]);
+  newEl.html('<br>');
+  addCommentLine(newEl);
+  hookUpCommentEvent(newEl);
+}
+
 function processKeyUp(e) {
   var node = $(window.getSelection().focusNode)
   var name = node[0].nodeName;
