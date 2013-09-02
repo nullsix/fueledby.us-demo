@@ -6,7 +6,7 @@ A real-time collaboration demo.
 Install
 -------
 
-### Node
+### Node.js
 
 https://github.com/joyent/node/wiki/Installing-Node.js-via-package-manager
 
@@ -14,6 +14,7 @@ https://github.com/joyent/node/wiki/Installing-Node.js-via-package-manager
 
 ```
 $ npm install socket.io
+$ npm install underscore
 ```
 
 Usage
@@ -36,9 +37,10 @@ see the collaborative portion.
 Dependencies
 ------------
 
-- node v0.10.17
+- Node.js v0.10.17
 - jQuery 2.0.3
 - Socket.IO v.9
+- Underscore.js 1.5.1
 
 License
 -------

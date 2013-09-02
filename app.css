@@ -38,3 +38,46 @@ body {
   float: right;
 }
 
+p {
+ padding-left: 7px;
+}
+.user1 {
+  border-left: 5px solid #2BB551;
+  padding-left: 2px;
+}
+.user1Name {
+  color: #2BB551;
+}
+
+.user2 {
+  border-left: 5px solid #9D00FF;
+  padding-left: 2px;
+}
+.user2Name {
+  color: #9D00FF;
+}
+
+.user3 {
+  border-left: 5px solid #FFAE00;
+  padding-left: 2px;
+}
+.user3Name {
+  color: #FFAE00;
+}
+
+.user4 {
+  border-left: 5px solid #E8009A;
+  padding-left: 2px;
+}
+.user4Name {
+  color: #E8009A;
+}
+
+.user5 {
+  border-left: 5px solid #00D8E8;
+  padding-left: 2px;
+}
+.user5 {
+  color: #00D8E8;
+}
+

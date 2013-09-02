@@ -77,7 +77,9 @@ socket.on('activeUsers', function(users) {
 function getActiveUsersNames() {
   var names = [];
   for(var username in activeUsers) {
-    names.push(username);
+    u = activeUsers[username];
+    names.push('<span class="user' + u.number + 'Name user' + u.number +
+               '">'+ username +'</span>');
   }
   return names;
 }
@@ -94,6 +96,7 @@ $(document).ready(function() {
   $('#content').wysiwyg();
   $('#content').keyup(userTyping);
   $('#username').keyup(logIn);
+  $('#content').on('keyup', colorUserText);
 });
 
 function userTyping() {
@@ -116,6 +119,15 @@ function logIn() {
     socket.emit('logIn', $('#username').val());
   }
 };
+
+function colorUserText(e) {
+  editedNode = $(window.getSelection().focusNode.parentElement);
+  console.log(editedNode);
+  if (editedNode[0].nodeName == "P") {
+    editedNode.removeClass();
+    editedNode.addClass('user'+currentUser.number);
+  }
+}
 
 function contentSaved() {
   setStatus('Saved');

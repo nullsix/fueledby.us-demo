@@ -1,6 +1,7 @@
 var app = require('http').createServer(handler)
   , io = require('socket.io').listen(app)
-  , fs = require('fs');
+  , fs = require('fs')
+  , _ = require('underscore');
 
 var contentVersionsFile = __dirname + '/contentVersions.json';
 var contentVersions = getContentVersions();
@@ -50,7 +51,7 @@ io.sockets.on('connection', function (socket) {
     if (name in contributors) {
       user = contributors[name];
     } else {
-      user = { name: name }
+      user = { name: name, number: _.keys(contributors).length+1 }
       newContributor(user);
     }
 
