@@ -1,7 +1,8 @@
 var socket = io.connect('http://fueledby.us');
 var currentUser;
 var activeUsers;
-var contentUploadTimer;
+var currentVersion;
+var contentToServerTimer;
 var isUserTyping = false;
 var TYPING_DELAY = 1000;
 
@@ -13,9 +14,10 @@ socket.on('connect', function() {
   }
 });
 
-socket.on('download', function (data) {
+socket.on('toClient', function (version) {
   if (!isUserTyping) {
-    $('#content').html(data);
+    currentVersion = version;
+    $('#content').html(currentVersion.content);
     contentSaved();
     if(userHasLoggedIn()) {
       setCaretAtEndOfContent();
@@ -95,16 +97,18 @@ $(document).ready(function() {
 });
 
 function userTyping() {
-  clearTimeout(contentUploadTimer);
+  clearTimeout(contentToServerTimer);
   isUserTyping = true;
   setStatus('Typing...');
-  contentUploadTimer = setTimeout(uploadContent, TYPING_DELAY);
+  contentToServerTimer = setTimeout(sendContentToServer, TYPING_DELAY);
 }
 
-function uploadContent() {
+function sendContentToServer() {
   isUserTyping = false;
   contentSaved();
-  socket.emit('upload', $('#content').html());
+  var versionPatch =
+    { content: $('#content').html(), lastVersionId: currentVersion.version };
+  socket.emit('toServer', versionPatch);
 };
 
 function logIn() {

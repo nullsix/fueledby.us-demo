@@ -2,8 +2,8 @@ var app = require('http').createServer(handler)
   , io = require('socket.io').listen(app)
   , fs = require('fs');
 
-var contentFile = __dirname + '/content.html';
-var content = getContent();
+var contentVersionsFile = __dirname + '/contentVersions.json';
+var contentVersions = getContentVersions();
 var contributorsFile = __dirname + '/contributors.json'
 var contributors = getContributors();
 var activeUsers = {};
@@ -35,13 +35,15 @@ function serveAsset(res, path) {
 }
 
 io.sockets.on('connection', function (socket) {
-  socket.emit('download', content);
+  socket.emit('toClient', contentVersions[contentVersions.length-1]);
   sendActiveUsers();
 
-  socket.on('upload', function(data) {
-    content = data;
-    saveContent(content);
-    socket.broadcast.emit('download', content);
+  socket.on('toServer', function(versionPatch) {
+    var newVersion = { content: versionPatch.content, version: contentVersions.length }
+    contentVersions.push(newVersion);
+    saveContentVersions(contentVersions);
+    socket.broadcast.emit('toClient',
+                          contentVersions[contentVersions.length-1]);
   });
 
   socket.on('logIn', function(name) {
@@ -74,16 +76,20 @@ io.sockets.on('connection', function (socket) {
   });
 });
 
-function getContent() {
-  if (!fs.existsSync(contentFile)) {
-    saveContent('<p>You can start typing here!</p>');
+function getContentVersions() {
+  if (!fs.existsSync(contentVersionsFile)) {
+    var defaultVersions =
+      [ { content: '<p>You can start typing here!</p>', version: 0 } ]
+    saveContentVersions(defaultVersions);
   }
 
-  return fs.readFileSync(contentFile).toString();
+  var contentVersionsBuffer = fs.readFileSync(contentVersionsFile);
+  return JSON.parse(contentVersionsBuffer.toString());
 }
 
-function saveContent(content) {
-  fs.writeFileSync(contentFile, content)
+function saveContentVersions(contentVersions) {
+  var contentString = JSON.stringify(contentVersions);
+  fs.writeFileSync(contentVersionsFile, contentString)
 }
 
 function getContributors() {
