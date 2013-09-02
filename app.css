@@ -47,6 +47,12 @@ div:focus {
   margin-left: 15px;
 }
 
+.commentIcon {
+  float: left;
+  opacity: 0;
+  padding-right: 1px;
+}
+
 .user1 {
   border-left: 5px solid #2BB551;
   padding-left: 2px;

@@ -80,7 +80,7 @@ io.sockets.on('connection', function (socket) {
 function getContentVersions() {
   if (!fs.existsSync(contentVersionsFile)) {
     var defaultVersions =
-      [ { content: '<p>You can start typing here!</p>', version: 0 } ]
+      [ { content: '<span class="commentIcon" contenteditable="false"><i class="icon icon-comment"></i></span><p>You can start typing here!</p>', version: 0 } ]
     saveContentVersions(defaultVersions);
   }
 

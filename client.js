@@ -19,11 +19,53 @@ socket.on('toClient', function (version) {
     currentVersion = version;
     $('#content').html(currentVersion.content);
     contentSaved();
+    hookUpCommentEvents();
     if(userHasLoggedIn()) {
       setCaretAtEndOfContent();
     }
   }
 });
+
+var commentSpan = '<span class="commentIcon" contenteditable="false"><i class="icon icon-comment"></i></span>';
+
+function addCommentLine(el) {
+  if (nothingBeforeThisParagraph(el) || noSpanBeforeThisElement(el)) {
+    el.before(commentSpan);
+  }
+}
+
+function nothingBeforeThisParagraph(el) {
+  return (el[0].nodeName == 'P') && (typeof el.prev()[0] === 'undefined')
+}
+
+function noSpanBeforeThisElement(el) {
+  return el.prev()[0].nodeName != "SPAN"
+}
+
+function hookUpCommentEvents() {
+  $('#content').find('p').each(function() {
+    hookUpCommentEvent($(this));
+  });
+}
+
+function hookUpCommentEvent(pTag) {
+  var icon = pTag.prev();
+  pTag.hover(
+    function() { icon.css('opacity', '1'); },
+    function() { icon.css('opacity', '0'); }
+  );
+  icon.hover(
+    function() { icon.css('opacity', '1'); },
+    function() { icon.css('opacity', '0'); }
+  );
+
+  // Insert the actual comment box
+  icon.click(function(e) {
+      var elementToInsertAfter = skipOverComments(pTag);
+      elementToInsertAfter.after('<div class="comments" contenteditable="true" style="margin-left:15px;"><textarea placeholder="Comment..." /></div>');
+      elementToInsertAfter.next().find('textarea').focus();
+  });
+}
 
 function userHasLoggedIn() {
   return !(typeof currentUser === 'undefined')
@@ -97,7 +139,44 @@ $(document).ready(function() {
   $('#content').keyup(userTyping);
   $('#username').keyup(logIn);
   $('#content').on('keyup', colorUserText);
+  $('#content').keydown(processKeyDown);
+  $('#content').keyup(processKeyUp);
 });
+
+function processKeyDown(e) {
+  if(e.keyCode == 13) { // Enter
+    var text = window.getSelection().focusNode;
+    var ptag = $(text.parentElement);
+    if(ptag[0].nodeName == 'P') {
+      e.preventDefault();
+      var newEl = ptag.clone();
+      var elementToPlaceAfter = skipOverComments(ptag);
+      elementToPlaceAfter.after(newEl);
+
+      placeCaretAtEnd(newEl[0]);
+      newEl.html('<br>');
+      addCommentLine(newEl);
+      hookUpCommentEvent(newEl);
+    }
+  }
+
+};
+function processKeyUp(e) {
+  var node = $(window.getSelection().focusNode)
+  var name = node[0].nodeName;
+  if (name == "DIV") {
+    var textarea = node.find('textarea')
+    textarea.text(textarea.val());
+  }
+}
+
+function skipOverComments(element) {
+  while ((!(typeof(element.next()[0]) === 'undefined')) &&
+         (element.next()[0].nodeName == 'DIV')) {
+      element = element.next();
+  }
+  return element;
+}
 
 function userTyping() {
   clearTimeout(contentToServerTimer);
@@ -121,8 +200,7 @@ function logIn() {
 };
 
 function colorUserText(e) {
-  editedNode = $(window.getSelection().focusNode.parentElement);
-  console.log(editedNode);
+  var editedNode = $(window.getSelection().focusNode.parentElement);
   if (editedNode[0].nodeName == "P") {
     editedNode.removeClass();
     editedNode.addClass('user'+currentUser.number);
@@ -136,5 +214,4 @@ function contentSaved() {
 function setStatus(text) {
   $('#status').html('<p>' + text + '</p>');
 }
-
 
