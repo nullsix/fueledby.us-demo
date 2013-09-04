@@ -21,6 +21,7 @@ socket.on('toClient', function (version) {
     contentSaved();
     hookUpCommentEvents();
     hookUpCommentRemoveEvents();
+    hookUpCommentReplyEvents();
     if(userHasLoggedIn()) {
       setCaretAtEndOfContent();
     }
@@ -71,9 +72,15 @@ function hookUpCommentEvent(pTag) {
         '<small class="muted">' +
           'comment from ' + currentUser.name +
         '</small>' +
+        '<div><small>' +
+        '<a href="#" class="reply-link">reply to comment</a>' +
+        '</small></div>' +
       '</div>');
-    elementToInsertAfter.next().find('textarea').focus();
+    var commentElement = elementToInsertAfter.next();
+    var replyElement = commentElement.find('.reply-link');
+    commentElement.find('textarea').focus();
     hookUpCommentRemoveEvent(elementToInsertAfter.next().find('i'));
+    hookUpCommentReplyEvent(replyElement, commentElement);
     userTyping();
   });
 }
@@ -88,6 +95,30 @@ function hookUpCommentRemoveEvent(el) {
   el.click(function(e) {
     placeCaretAtEnd($(this).parent().prev()[0]);
     $(this).parent().remove();
+    userTyping();
+  });
+}
+
+function hookUpCommentReplyEvents() {
+  $('#content').find('.comments').each (function() {
+    var comment = $(this);
+    comment.find('.reply-link').each(function() {
+      hookUpCommentReplyEvent($(this), comment);
+    })
+  });
+}
+
+function hookUpCommentReplyEvent(reply, comment) {
+  reply.click(function(e) {
+    e.preventDefault();
+    $(this).before('<div class="reply user' + currentUser.number +'">' +
+                     '<div class="reply-input"></div>' +
+                     // '<input type="text" class="reply-input"></input>' +
+                     '<br><small class="muted reply-user' +
+                     '">reply by ' + currentUser.name + '</small>' +
+                   '</div>');
+    placeCaretAtEnd(comment.find('.reply-input').last()[0]);
+    console.log(comment.find('.reply-input').last());
     userTyping();
   });
 }
