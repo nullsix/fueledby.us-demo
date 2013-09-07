@@ -6,6 +6,10 @@ var contentToServerTimer;
 var isUserTyping = false;
 var TYPING_DELAY = 1000;
 
+//////////////////////////////////////////////////////////////////////
+// Socket Messages
+//////////////////////////////////////////////////////////////////////
+
 socket.on('connect', function() {
   if($.cookie('currentUser')) {
     socket.emit('logIn', $.cookie('currentUser'));
@@ -27,6 +31,39 @@ socket.on('toClient', function (version) {
     }
   }
 });
+
+socket.on('currentUser', function(user) {
+  currentUser = user;
+  $.cookie('currentUser', currentUser.name);
+  $('#currentUser').html('<p>Hi, ' + currentUser.name + '!</p>');
+  setCaretAtEndOfContent();
+});
+
+socket.on('activeUsers', function(users) {
+  activeUsers = users;
+
+  var names = getActiveUsersNames();
+
+  $('#activeUsers').html('<p>' + getActiveUserString(names)+ '</p>');
+});
+
+//////////////////////////////////////////////////////////////////////
+// Document Ready
+//////////////////////////////////////////////////////////////////////
+
+$(document).ready(function() {
+  $('#username').keyup(logIn);
+  $('#content').wysiwyg();
+  $('#content').keyup(userTyping);
+  $('#content').on('keyup', colorUserText);
+  $('#content').keydown(processKeyDown);
+  $('#content').keyup(processKeyUp);
+});
+
+
+//////////////////////////////////////////////////////////////////////
+// Comments
+//////////////////////////////////////////////////////////////////////
 
 var commentSpan = '<span class="commentIcon" contenteditable="false"><i class="icon icon-comment"></i></span>';
 
@@ -123,6 +160,10 @@ function hookUpCommentReplyEvent(reply, comment) {
   });
 }
 
+/////////////////////////////////////////////////////////////////////
+// Utility Functions
+/////////////////////////////////////////////////////////////////////
+
 function userHasLoggedIn() {
   return !(typeof currentUser === 'undefined')
 }
@@ -157,20 +198,9 @@ function placeCaretAtEnd(el) {
   }
 }
 
-socket.on('currentUser', function(user) {
-  currentUser = user;
-  $.cookie('currentUser', currentUser.name);
-  $('#currentUser').html('<p>Hi, ' + currentUser.name + '!</p>');
-  setCaretAtEndOfContent();
-});
-
-socket.on('activeUsers', function(users) {
-  activeUsers = users;
-
-  var names = getActiveUsersNames();
-
-  $('#activeUsers').html('<p>' + getActiveUserString(names)+ '</p>');
-});
+//////////////////////////////////////////////////////////////////////
+// User Names
+//////////////////////////////////////////////////////////////////////
 
 function getActiveUsersNames() {
   var names = [];
@@ -190,14 +220,9 @@ function getActiveUserString(names) {
   }
 }
 
-$(document).ready(function() {
-  $('#content').wysiwyg();
-  $('#content').keyup(userTyping);
-  $('#username').keyup(logIn);
-  $('#content').on('keyup', colorUserText);
-  $('#content').keydown(processKeyDown);
-  $('#content').keyup(processKeyUp);
-});
+//////////////////////////////////////////////////////////////////////
+// Key Press Functions
+//////////////////////////////////////////////////////////////////////
 
 function processKeyDown(e) {
   if(e.keyCode == 13) { // Enter
