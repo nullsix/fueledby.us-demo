@@ -275,7 +275,7 @@ function skipOverComments(element) {
 function userTyping() {
   clearTimeout(contentToServerTimer);
   isUserTyping = true;
-  setStatus('Typing...');
+  setStatus('Editing...');
   contentToServerTimer = setTimeout(sendContentToServer, TYPING_DELAY);
 }
 
