@@ -22,6 +22,7 @@ socket.on('toClient', function (version) {
   if (!isUserTyping) {
     currentVersion = version;
     $('#content').html(currentVersion.content);
+    hideAllCommentIcons();
     contentSaved();
     setUpComments();
     if(userHasLoggedIn()) {
@@ -78,6 +79,13 @@ function removeAllEventHandlers() {
 
 function placeCommentIcons() {
   $('#content').find('p').each(function() { addCommentLine($(this)) });
+}
+
+function hideAllCommentIcons() {
+  $('#content').find('.commentIcon').each(function() {
+    console.log('setting opacity');
+    $(this).css('opacity', '0');
+  });
 }
 
 var commentSpan = '<span class="commentIcon" contenteditable="false"><i class="icon icon-comment"></i></span>';
