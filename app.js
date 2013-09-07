@@ -51,7 +51,7 @@ io.sockets.on('connection', function (socket) {
     if (name in contributors) {
       user = contributors[name];
     } else {
-      user = { name: name, number: _.keys(contributors).length+1 }
+      user = { name: name, rep: 0, number: _.keys(contributors).length+1 }
       newContributor(user);
     }
 
@@ -104,7 +104,7 @@ function getContributors() {
 }
 
 function saveContributors(contributors) {
-  var contributorsString = JSON.stringify(contributors);
+  var contributorsString = JSON.stringify(contributors, null, '\t');
   fs.writeFileSync(contributorsFile, contributorsString);
 }
 

@@ -44,6 +44,7 @@ socket.on('activeUsers', function(users) {
   var names = getActiveUsersNames();
 
   $('#activeUsers').html('<p>' + getActiveUserString(names)+ '</p>');
+  enableTooltips();
 });
 
 socket.on('disconnect', function() {
@@ -66,6 +67,9 @@ $(document).ready(function() {
   $('#content').keyup(setUpComments);
 });
 
+function enableTooltips() {
+  $("span[rel=tooltip]").tooltip();
+}
 
 //////////////////////////////////////////////////////////////////////
 // Comments
@@ -253,7 +257,8 @@ function getActiveUsersNames() {
   for(var username in activeUsers) {
     u = activeUsers[username];
     names.push('<span class="user' + u.number + 'Name user' + u.number +
-               '">'+ username +'</span>');
+               '" rel="tooltip" data-toggle="tooltip" ' +
+               'data-title="' + u.rep + '">'+ username +'</span>');
   }
   return names;
 }
