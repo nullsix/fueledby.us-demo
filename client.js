@@ -75,6 +75,7 @@ function setUpComments() {
   removeAllEventHandlers();
   placeCommentIcons();
   hookUpCommentEvents();
+  hookUpCommentStarEvents();
   hookUpCommentRemoveEvents();
   hookUpCommentReplyEvents();
 }
@@ -134,6 +135,7 @@ function hookUpCommentEvent(pTag) {
     elementToInsertAfter.after(
       '<div class="comments user' + currentUser.number + '" ' +
         'contenteditable="true">' +
+        '<i class="icon icon-star-empty"></i>&nbsp;' +
         '<textarea placeholder="Comment..." />' +
         '&nbsp;<i class="icon icon-remove"></i><br>' +
         '<small class="muted">' +
@@ -147,14 +149,15 @@ function hookUpCommentEvent(pTag) {
     var replyElement = commentElement.find('.reply-link');
     var textArea = commentElement.find('textarea');
     textArea.focus();
-    hookUpCommentRemoveEvent(elementToInsertAfter.next().find('i'));
+    hookUpCommentRemoveEvent(commentElement.find('i.icon-remove'));
+    hookUpCommentStarEvent(commentElement.find('i.icon-star-empty'));
     hookUpCommentReplyEvent(replyElement, commentElement);
     userTyping();
   });
 }
 
 function hookUpCommentRemoveEvents() {
-  $('#content').find('.comments').find('i').each(function() {
+  $('#content').find('.comments').find('i.icon-remove').each(function() {
     hookUpCommentRemoveEvent($(this));
   });
 }
@@ -187,6 +190,19 @@ function hookUpCommentReplyEvent(reply, comment) {
     placeCaretAtEnd(comment.find('.reply-input').last()[0]);
     console.log(comment.find('.reply-input').last());
     userTyping();
+  });
+}
+
+function hookUpCommentStarEvents() {
+  $('#content').find('.comments').find('i.icon-star-empty').each(function() {
+    hookUpCommentStarEvent($(this));
+  });
+}
+
+function hookUpCommentStarEvent(star) {
+  star.click(function(e) {
+    $(this).removeClass('icon-star-empty');
+    $(this).addClass('icon-star');
   });
 }
 

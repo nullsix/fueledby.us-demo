@@ -154,3 +154,6 @@ div.reply {
   vertical-align: top;
 }
 
+i.icon-remove:hover, i.icon-star-empty:hover {
+  cursor: pointer;
+}
