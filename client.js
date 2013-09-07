@@ -226,17 +226,24 @@ function getActiveUserString(names) {
 //////////////////////////////////////////////////////////////////////
 
 function handleNewLine(e) {
+  //TODO: This breaks adding a new line in the middle/end of a line...
   if(e.keyCode == 13) { // Enter
     processEnter(e);
   }
 };
 
 function processEnter(e) {
-  var focus = $(window.getSelection().focusNode);
+  var sel = window.getSelection();
+  var focus = $(sel.focusNode);
   var el;
   if(focus[0].nodeName == '#text') {
     // Focus is with the text in the p tag.
-    el = $(focus[0].parentElement);
+    // Is the cursor at the end of the line?
+    if (sel.extentOffset == sel.focusNode.textContent.length) {
+      el = $(focus[0].parentElement);
+    } else { // If the cursor isn't at end of line, treat it normally.
+      return;
+    }
   } else if (focus[0].nodeName == 'P') {
     // Focus is with the p tag itself.
     el = focus;
