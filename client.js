@@ -46,6 +46,12 @@ socket.on('activeUsers', function(users) {
   $('#activeUsers').html('<p>' + getActiveUserString(names)+ '</p>');
 });
 
+socket.on('disconnect', function() {
+  clearTimeout(contentToServerTimer); // Don't send this to the server.
+  $('#content').html('<h1>Server disconnected. Trying to reconnect...</h1>');
+  setTimeout(function() { location.reload(true); }, 500);
+});
+
 //////////////////////////////////////////////////////////////////////
 // Document Ready
 //////////////////////////////////////////////////////////////////////
