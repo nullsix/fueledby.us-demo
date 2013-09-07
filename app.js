@@ -89,7 +89,7 @@ function getContentVersions() {
 }
 
 function saveContentVersions(contentVersions) {
-  var contentString = JSON.stringify(contentVersions);
+  var contentString = JSON.stringify(contentVersions, null, '\t');
   fs.writeFileSync(contentVersionsFile, contentString)
 }
 
