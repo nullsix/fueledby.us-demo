@@ -69,6 +69,7 @@ var commentSpan = '<span class="commentIcon" contenteditable="false"><i class="i
 
 function addCommentLine(el) {
   if (nothingBeforeThisParagraph(el) || noSpanBeforeThisElement(el)) {
+    userTyping();
     el.before(commentSpan);
   }
 }
