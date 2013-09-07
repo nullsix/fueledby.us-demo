@@ -330,11 +330,17 @@ function logIn() {
 };
 
 function colorUserText(e) {
+  if (isIgnoredWhich(e.which)) { return; }
+
   var editedNode = $(window.getSelection().focusNode.parentElement);
   if (editedNode[0].nodeName == "P") {
     editedNode.removeClass();
     editedNode.addClass('user'+currentUser.number);
   }
+}
+
+function isIgnoredWhich(which) {
+  return which >= 33 && which <= 40
 }
 
 function contentSaved() {
