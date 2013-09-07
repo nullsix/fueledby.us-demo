@@ -255,8 +255,7 @@ function getActiveUserString(names) {
 //////////////////////////////////////////////////////////////////////
 
 function handleNewLine(e) {
-  //TODO: This breaks adding a new line in the middle/end of a line...
-  if(e.keyCode == 13) { // Enter
+  if(e.which == 13) { // Enter
     processEnter(e);
   }
 };
@@ -325,7 +324,7 @@ function sendContentToServer() {
 };
 
 function logIn() {
-  if (event.keyCode == 13) {
+  if (event.which == 13) {
     socket.emit('logIn', $('#username').val());
   }
 };
