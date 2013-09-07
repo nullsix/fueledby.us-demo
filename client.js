@@ -132,8 +132,8 @@ function hookUpCommentEvent(pTag) {
   icon.click(function(e) {
     var elementToInsertAfter = skipOverComments(pTag);
     elementToInsertAfter.after(
-      '<div class="comments user' + currentUser.number +
-        '" contenteditable="true">'+
+      '<div class="comments user' + currentUser.number + '" ' +
+        'contenteditable="true">' +
         '<textarea placeholder="Comment..." />' +
         '&nbsp;<i class="icon icon-remove"></i><br>' +
         '<small class="muted">' +
@@ -145,7 +145,8 @@ function hookUpCommentEvent(pTag) {
       '</div>');
     var commentElement = elementToInsertAfter.next();
     var replyElement = commentElement.find('.reply-link');
-    commentElement.find('textarea').focus();
+    var textArea = commentElement.find('textarea');
+    textArea.focus();
     hookUpCommentRemoveEvent(elementToInsertAfter.next().find('i'));
     hookUpCommentReplyEvent(replyElement, commentElement);
     userTyping();
@@ -167,7 +168,7 @@ function hookUpCommentRemoveEvent(el) {
 }
 
 function hookUpCommentReplyEvents() {
-  $('#content').find('.comments').each (function() {
+  $('#content').find('.comments').each(function() {
     var comment = $(this);
     comment.find('.reply-link').each(function() {
       hookUpCommentReplyEvent($(this), comment);
@@ -179,9 +180,8 @@ function hookUpCommentReplyEvent(reply, comment) {
   reply.click(function(e) {
     e.preventDefault();
     $(this).before('<div class="reply user' + currentUser.number +'">' +
-                     '<div class="reply-input"></div>' +
-                     // '<input type="text" class="reply-input"></input>' +
-                     '<br><small class="muted reply-user' +
+                     '<div class="reply-input" contenteditable="true"></div>' +
+                     '<small class="muted reply-user' +
                      '">reply by ' + currentUser.name + '</small>' +
                    '</div>');
     placeCaretAtEnd(comment.find('.reply-input').last()[0]);
