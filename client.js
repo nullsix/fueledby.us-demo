@@ -57,7 +57,7 @@ $(document).ready(function() {
   $('#content').keyup(userTyping);
   $('#content').on('keyup', colorUserText);
   $('#content').keydown(handleNewLine);
-  $('#content').keyup(processKeyUp);
+  $('#content').keyup(persistCommentText);
 });
 
 
@@ -255,12 +255,12 @@ function processEnter(e) {
   hookUpCommentEvent(newEl);
 }
 
-function processKeyUp(e) {
+function persistCommentText(e) {
   var node = $(window.getSelection().focusNode)
   var name = node[0].nodeName;
   if (name == "DIV") {
     var textarea = node.find('textarea')
-    textarea.text(textarea.val());
+    textarea.text(textarea.val()); // Persist the text area.
   }
 }
 
