@@ -56,7 +56,7 @@ $(document).ready(function() {
   $('#content').wysiwyg();
   $('#content').keyup(userTyping);
   $('#content').on('keyup', colorUserText);
-  $('#content').keydown(processKeyDown);
+  $('#content').keydown(handleNewLine);
   $('#content').keyup(processKeyUp);
 });
 
@@ -224,7 +224,7 @@ function getActiveUserString(names) {
 // Key Press Functions
 //////////////////////////////////////////////////////////////////////
 
-function processKeyDown(e) {
+function handleNewLine(e) {
   if(e.keyCode == 13) { // Enter
     processEnter(e);
   }
