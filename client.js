@@ -23,9 +23,7 @@ socket.on('toClient', function (version) {
     currentVersion = version;
     $('#content').html(currentVersion.content);
     contentSaved();
-    hookUpCommentEvents();
-    hookUpCommentRemoveEvents();
-    hookUpCommentReplyEvents();
+    setUpComments();
     if(userHasLoggedIn()) {
       setCaretAtEndOfContent();
     }
@@ -58,12 +56,29 @@ $(document).ready(function() {
   $('#content').on('keyup', colorUserText);
   $('#content').keydown(handleNewLine);
   $('#content').keyup(persistCommentText);
+  $('#content').keyup(setUpComments);
 });
 
 
 //////////////////////////////////////////////////////////////////////
 // Comments
 //////////////////////////////////////////////////////////////////////
+
+function setUpComments() {
+  removeAllEventHandlers();
+  placeCommentIcons();
+  hookUpCommentEvents();
+  hookUpCommentRemoveEvents();
+  hookUpCommentReplyEvents();
+}
+
+function removeAllEventHandlers() {
+  $('#content').find('*').off();
+}
+
+function placeCommentIcons() {
+  $('#content').find('p').each(function() { addCommentLine($(this)) });
+}
 
 var commentSpan = '<span class="commentIcon" contenteditable="false"><i class="icon icon-comment"></i></span>';
 
