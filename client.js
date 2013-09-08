@@ -94,7 +94,6 @@ function placeCommentIcons() {
 
 function hideAllCommentIcons() {
   $('#content').find('.commentIcon').each(function() {
-    console.log('setting opacity');
     $(this).css('opacity', '0');
   });
 }
@@ -138,7 +137,7 @@ function hookUpCommentEvent(pTag) {
     var elementToInsertAfter = skipOverComments(pTag);
     elementToInsertAfter.after(
       '<div class="comments user' + currentUser.number + '" ' +
-        'contenteditable="true">' +
+        'contenteditable="true" name="' + currentUser.name+ '">' +
         '<i class="icon icon-star-empty"></i>&nbsp;' +
         '<textarea placeholder="Comment..." />' +
         '&nbsp;<i class="icon icon-remove"></i><br>' +
@@ -187,12 +186,11 @@ function hookUpCommentReplyEvent(reply, comment) {
   reply.click(function(e) {
     e.preventDefault();
     $(this).before('<div class="reply user' + currentUser.number +'">' +
-                     '<div class="reply-input" contenteditable="true"></div>' +
+                     '<div class="reply-input" contenteditable="true"></div><br>' +
                      '<small class="muted reply-user' +
                      '">reply by ' + currentUser.name + '</small>' +
                    '</div>');
     placeCaretAtEnd(comment.find('.reply-input').last()[0]);
-    console.log(comment.find('.reply-input').last());
     userTyping();
   });
 }
@@ -207,6 +205,9 @@ function hookUpCommentStarEvent(star) {
   star.click(function(e) {
     $(this).removeClass('icon-star-empty');
     $(this).addClass('icon-star');
+    var stardUserName = $(this).closest('.comments').attr("name");
+    socket.emit('increaseRep', stardUserName);
+    userTyping();
   });
 }
 
@@ -255,10 +256,10 @@ function placeCaretAtEnd(el) {
 function getActiveUsersNames() {
   var names = [];
   for(var username in activeUsers) {
-    u = activeUsers[username];
+    var u = activeUsers[username];
     names.push('<span class="user' + u.number + 'Name user' + u.number +
                '" rel="tooltip" data-toggle="tooltip" ' +
-               'data-title="' + u.rep + '">'+ username +'</span>');
+               'data-original-title="' + u.rep + '">'+ username +'</span>');
   }
   return names;
 }

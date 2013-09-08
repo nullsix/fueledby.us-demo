@@ -48,6 +48,7 @@ io.sockets.on('connection', function (socket) {
   });
 
   socket.on('logIn', function(name) {
+    var user;
     if (name in contributors) {
       user = contributors[name];
     } else {
@@ -74,6 +75,13 @@ io.sockets.on('connection', function (socket) {
       }
       sendActiveUsers();
     });
+  });
+
+  socket.on('increaseRep', function(name) {
+    var u = contributors[name];
+    u.rep += 5;
+    saveContributors(contributors);
+    sendActiveUsers();
   });
 });
 
