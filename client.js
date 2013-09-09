@@ -60,7 +60,6 @@ $(document).ready(function() {
   $('#username').keyup(logIn);
   $('#content').wysiwyg();
   $('#content').keyup(userTyping);
-  $('#content').on('keyup', colorUserText);
   $('#content').keydown(handleNewLine);
   $('#content').keyup(persistCommentText);
   $('#content').keyup(setUpComments);
@@ -345,16 +344,6 @@ function logIn() {
     socket.emit('logIn', $('#username').val());
   }
 };
-
-function colorUserText(e) {
-  if (isIgnoredWhich(e.which)) { return; }
-
-  var editedNode = $(window.getSelection().focusNode.parentElement);
-  if (editedNode[0].nodeName == "P") {
-    editedNode.removeClass();
-    editedNode.addClass('user'+currentUser.number);
-  }
-}
 
 function isIgnoredWhich(which) {
   return which >= 33 && which <= 40
