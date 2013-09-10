@@ -4,7 +4,7 @@ var activeUsers;
 var currentVersion;
 var contentToServerTimer;
 var isUserTyping = false;
-var TYPING_DELAY = 1000;
+var TYPING_DELAY = 0;
 
 //////////////////////////////////////////////////////////////////////
 // Socket Messages
@@ -25,9 +25,6 @@ socket.on('toClient', function (version) {
     hideAllCommentIcons();
     contentSaved();
     setUpComments();
-    if(userHasLoggedIn()) {
-      setCaretAtEndOfContent();
-    }
   }
 });
 
@@ -35,7 +32,6 @@ socket.on('currentUser', function(user) {
   currentUser = user;
   $.cookie('currentUser', currentUser.name);
   $('#currentUser').html('<p>Hi, ' + currentUser.name + '!</p>');
-  setCaretAtEndOfContent();
 });
 
 socket.on('activeUsers', function(users) {
@@ -211,11 +207,6 @@ function hookUpCommentStarEvent(star) {
 
 function userHasLoggedIn() {
   return !(typeof currentUser === 'undefined')
-}
-
-function setCaretAtEndOfContent() {
-  var c = $('#content')[0];
-  placeCaretAtEnd(c);
 }
 
 // Function courtesy of StackOverflow.
